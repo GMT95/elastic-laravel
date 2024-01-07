@@ -4,7 +4,6 @@ namespace App\Articles;
 
 use App\Models\Headline;
 use Elastic\Elasticsearch\Client;
-use ElasticPaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
