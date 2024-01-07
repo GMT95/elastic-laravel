@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Console\Commands;
-
-use App\Models\Article;
+use App\Models\Headline;
 use Elastic\Elasticsearch\Client;
 use Illuminate\Console\Command;
 
@@ -20,7 +19,7 @@ class ReindexCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Indexes all articles to Elasticsearch';
+    protected $description = 'Indexes all headlines to Elasticsearch';
 
     /** @var \Elasticsearch\Client */
     private $elasticsearch;
@@ -34,17 +33,16 @@ class ReindexCommand extends Command
 
     public function handle()
     {
-        $this->info('Indexing all articles. This might take a while...');
+        $this->info('Indexing all Headlines. This might take a while...');
 
-        foreach (Article::cursor() as $article)
+        foreach (Headline::cursor() as $headline)
         {
-            // echo print_r($article->toSearchArray()); exit;
             
             $this->elasticsearch->index([
-                'index' => $article->getSearchIndex(),
-                'type' => $article->getSearchType(),
-                'id' => $article->getKey(),
-                'body' => $article->toSearchArray(),
+                'index' => $headline->getSearchIndex(),
+                'type' => $headline->getSearchType(),
+                'id' => $headline->getKey(),
+                'body' => $headline->toSearchArray(),
             ]);
 
             // PHPUnit-style feedback

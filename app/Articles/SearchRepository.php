@@ -2,9 +2,9 @@
 
 namespace App\Articles;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface SearchRepository
 {
-    public function search(string $query): Collection;
+    public function search(array $searchParams): LengthAwarePaginator;
 }

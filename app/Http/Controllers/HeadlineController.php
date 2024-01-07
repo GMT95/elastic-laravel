@@ -2,19 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Articles\SearchRepository;
 use App\Models\Headline;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class HeadlineController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, SearchRepository $searchRepository)
     {
-        $headlines = Headline::paginate(10)->onEachSide(2);
+        $searchQuery = $request->has('q');
+        $categories = Headline::getDistinctCategories();
 
-        return view('headline.index', compact('headlines'));
+        // http://127.0.0.1/headline?q=abcd&category=PARENTING&start_date=2024-01-04&end_date=2024-01-17
+        $validatedData = $request->validate([
+            'q' => 'nullable|string',
+            'category' => ['sometimes', Rule::in($categories)],
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date'
+        ]);
+
+        // dd($validatedData);
+
+        if($searchQuery) {
+            $headlines = $searchRepository->search($validatedData);
+
+        } else {
+            $headlines = Headline::paginate(10);
+        }
+
+        return view('headline.index', compact('headlines', 'categories'));
     }
 
     /**
